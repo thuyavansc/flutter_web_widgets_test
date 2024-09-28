@@ -61,7 +61,7 @@ List<MenuItem> buildMenu() {
                   icon: Icons.build,
                   subMenuItems: [
                     MenuItem(
-                      title: 'Submenu 1.1.1.1.1',
+                      title: 'Submenu 1.1.1.1.1 Submenu 1.1.1.1.1',
                       icon: Icons.security,
                     ),
                     MenuItem(
