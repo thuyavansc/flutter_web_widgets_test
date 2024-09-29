@@ -424,6 +424,42 @@ import 'package:provider/provider.dart';
 // }
 
 
+//
+// void main() {
+//   runApp(
+//     MultiProvider(
+//       providers: [
+//         ChangeNotifierProvider(create: (_) => DeviceDetailsProvider()..fetchDeviceDetails()),
+//       ],
+//       child: MaterialApp(
+//         home: MyApp(),
+//       ),
+//     ),
+//   );
+// }
+//
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Device Management'),
+//       ),
+//       body: Center(
+//         child: ElevatedButton(
+//           onPressed: () {
+//             Navigator.of(context).push(
+//               MaterialPageRoute(builder: (context) => DraggableResizablePopup()),
+//             );
+//           },
+//           child: Text('Open Device Details'),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
 
 void main() {
   runApp(
@@ -448,9 +484,8 @@ class MyApp extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => DraggableResizablePopup()),
-            );
+            // Show the popup using Overlay
+            showDraggablePopup(context);
           },
           child: Text('Open Device Details'),
         ),
