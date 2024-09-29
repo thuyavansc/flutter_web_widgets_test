@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_web_widgets_test/paginated_datatable_example.dart';
+import 'controller/datatable_provider.dart';
 import 'controller/menu_provider.dart';
 import 'custom_sidemenu.dart';
 import 'model/menu_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 
 
 // void main() {
@@ -290,11 +293,75 @@ import 'package:provider/provider.dart';
 
 
 
+// void main() {
+//   runApp(
+//     MultiProvider(
+//       providers: [
+//         ChangeNotifierProvider(create: (_) => MenuSelectionProvider()),
+//       ],
+//       child: MyApp(),
+//     ),
+//   );
+// }
+//
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: Scaffold(
+//         appBar: AppBar(title: Text('Dynamic Menu')),
+//         drawer: CustomSidemenu(
+//           menuItems: buildMenu(),
+//           onMenuItemTap: (menuItem) {
+//             print('Selected: ${menuItem.title}');
+//           },
+//         ),
+//         body: Center(child: Text('Content goes here')),
+//       ),
+//     );
+//   }
+// }
+
+
+
+// void main() {
+//   runApp(
+//     MultiProvider(
+//       providers: [
+//         ChangeNotifierProvider(create: (_) => DataProvider()),
+//         ChangeNotifierProvider(create: (_) => MenuSelectionProvider()),
+//       ],
+//       child: MyApp(),
+//     ),
+//   );
+// }
+//
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: Scaffold(
+//         appBar: AppBar(title: Text('Dynamic Menu')),
+//         // drawer: CustomSidemenu(
+//         //   menuItems: buildMenu(),
+//         //   onMenuItemTap: (menuItem) {
+//         //     print('Selected: ${menuItem.title}');
+//         //   },
+//         // ),
+//         body: PaginatedDataTableExample(),
+//       ),
+//     );
+//   }
+// }
+
+
+
+
 void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => MenuSelectionProvider()),
+        ChangeNotifierProvider(create: (_) => DataProvider()),
       ],
       child: MyApp(),
     ),
@@ -305,16 +372,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: Text('Dynamic Menu')),
-        drawer: CustomSidemenu(
-          menuItems: buildMenu(),
-          onMenuItemTap: (menuItem) {
-            print('Selected: ${menuItem.title}');
-          },
-        ),
-        body: Center(child: Text('Content goes here')),
-      ),
+      home: PaginatedDataTableExample(),
     );
   }
 }
