@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_web_widgets_test/paginated_datatable_example.dart';
 import 'controller/datatable_provider.dart';
+import 'controller/device_details_provider.dart';
 import 'controller/menu_provider.dart';
 import 'custom_sidemenu.dart';
+import 'device_popup.dart';
 import 'model/menu_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -356,23 +358,66 @@ import 'package:provider/provider.dart';
 
 
 
+//Data table
+// void main() {
+//   runApp(
+//     MultiProvider(
+//       providers: [
+//         ChangeNotifierProvider(create: (_) => DataProvider()),
+//       ],
+//       child: MyApp(),
+//     ),
+//   );
+// }
+//
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: PaginatedDataTableExample(),
+//     );
+//   }
+// }
 
+
+
+
+// Main Function and Provider Setup
 void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => DataProvider()),
+        ChangeNotifierProvider(create: (_) => DeviceDetailsProvider()..fetchDeviceDetails()),
       ],
-      child: MyApp(),
+      child: MaterialApp(
+        home: MyApp(),
+      ),
     ),
   );
 }
 
+// MyApp with Button to open Popup
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: PaginatedDataTableExample(),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Device Management'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            // Trigger to show the popup window
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return DevicePopup();
+              },
+            );
+          },
+          child: Text('Open Device Details'),
+        ),
+      ),
     );
   }
 }
