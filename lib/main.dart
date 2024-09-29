@@ -6,6 +6,7 @@ import 'controller/device_details_provider.dart';
 import 'controller/menu_provider.dart';
 import 'custom_sidemenu.dart';
 import 'device_popup.dart';
+import 'draggable_resizable_popup.dart';
 import 'model/menu_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -383,6 +384,47 @@ import 'package:provider/provider.dart';
 
 
 // Main Function and Provider Setup
+// void main() {
+//   runApp(
+//     MultiProvider(
+//       providers: [
+//         ChangeNotifierProvider(create: (_) => DeviceDetailsProvider()..fetchDeviceDetails()),
+//       ],
+//       child: MaterialApp(
+//         home: MyApp(),
+//       ),
+//     ),
+//   );
+// }
+//
+// // MyApp with Button to open Popup
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Device Management'),
+//       ),
+//       body: Center(
+//         child: ElevatedButton(
+//           onPressed: () {
+//             // Trigger to show the popup window
+//             showDialog(
+//               context: context,
+//               builder: (BuildContext context) {
+//                 return DevicePopup();
+//               },
+//             );
+//           },
+//           child: Text('Open Device Details'),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
+
 void main() {
   runApp(
     MultiProvider(
@@ -396,7 +438,6 @@ void main() {
   );
 }
 
-// MyApp with Button to open Popup
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -407,12 +448,8 @@ class MyApp extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            // Trigger to show the popup window
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return DevicePopup();
-              },
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => DraggableResizablePopup()),
             );
           },
           child: Text('Open Device Details'),

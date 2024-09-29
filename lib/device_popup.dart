@@ -149,7 +149,7 @@ class DevicePopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      insetPadding: EdgeInsets.all(15),
+      insetPadding: EdgeInsets.only(left: 200, top: 25),
       child: Column(
         children: [
           // Header with Close Button
