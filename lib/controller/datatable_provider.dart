@@ -561,6 +561,7 @@ import '../model/user.dart';
 class DataProvider with ChangeNotifier {
   final List<Map<String, dynamic>> _allData = List.generate(50, (index) {
     return {
+      'id': index+1,
       'deviceName': 'Device ${index + 1}',
       'image': index % 2 == 0 ? 'https://example.com/image${index + 1}.png' : null, // Example image URL
       'manufacturer': 'Manufacturer ${index + 1}',

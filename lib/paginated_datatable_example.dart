@@ -941,7 +941,7 @@ class PaginatedDataTableExample extends StatelessWidget {
                     rows: _buildTableRows(provider.pagedData, provider),
                     columnSpacing: 12,
                     horizontalMargin: 12,
-                    minWidth: 600,
+                    minWidth: 1200,
                   ),
                 ),
                 SizedBox(height: 10),
@@ -961,7 +961,7 @@ class PaginatedDataTableExample extends StatelessWidget {
           padding: EdgeInsets.all(8),
           child: Text(
             header.toUpperCase(),
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
       );
