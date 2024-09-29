@@ -486,9 +486,92 @@ import '../model/user.dart';
 
 
 
+// class DataProvider with ChangeNotifier {
+//   final List<Map<String, dynamic>> _allData = List.generate(50, (index) {
+//     return {'name': 'Item ${index + 1}', 'id': index + 1, 'action': 'Edit'};
+//   });
+//
+//   List<Map<String, dynamic>> _pagedData = [];
+//   bool _isLoading = false;
+//   int _currentPage = 0;
+//   int _pageSize = 5; // Default page size
+//
+//   Set<int> _selectedRowIds = Set();
+//
+//   List<Map<String, dynamic>> get pagedData => _pagedData;
+//   List<Map<String, dynamic>> get allData => _allData;
+//   bool get isLoading => _isLoading;
+//   int get currentPage => _currentPage;
+//   int get pageSize => _pageSize;
+//   Set<int> get selectedRowIds => _selectedRowIds;
+//
+//   Future<void> fetchData({required int page, required int pageSize}) async {
+//     _isLoading = true;
+//     notifyListeners();
+//
+//     await Future.delayed(Duration(milliseconds: 500)); // Simulate network delay
+//
+//     int startIndex = page * pageSize;
+//     int endIndex = startIndex + pageSize;
+//
+//     if (startIndex < _allData.length) {
+//       _pagedData = _allData.sublist(startIndex, endIndex > _allData.length ? _allData.length : endIndex);
+//     } else {
+//       _pagedData = [];
+//     }
+//
+//     _isLoading = false;
+//     notifyListeners();
+//   }
+//
+//   void toggleRowSelection(int id) {
+//     if (_selectedRowIds.contains(id)) {
+//       _selectedRowIds.remove(id);
+//     } else {
+//       _selectedRowIds.add(id);
+//     }
+//     notifyListeners();
+//   }
+//
+//   void changePageSize(int newSize) {
+//     int currentFirstItemIndex = _currentPage * _pageSize; // Get the index of the first item in the current view
+//     _pageSize = newSize;
+//     _currentPage = currentFirstItemIndex ~/ _pageSize; // Calculate new current page based on new page size
+//     fetchData(page: _currentPage, pageSize: _pageSize);
+//   }
+//
+//   Future<void> fetchNextPage() async {
+//     _currentPage++;
+//     await fetchData(page: _currentPage, pageSize: _pageSize);
+//   }
+//
+//   Future<void> fetchPreviousPage() async {
+//     if (_currentPage > 0) {
+//       _currentPage--;
+//       await fetchData(page: _currentPage, pageSize: _pageSize);
+//     }
+//   }
+// }
+
+
+
+
+
+
 class DataProvider with ChangeNotifier {
   final List<Map<String, dynamic>> _allData = List.generate(50, (index) {
-    return {'name': 'Item ${index + 1}', 'id': index + 1, 'action': 'Edit'};
+    return {
+      'deviceName': 'Device ${index + 1}',
+      'image': index % 2 == 0 ? 'https://example.com/image${index + 1}.png' : null, // Example image URL
+      'manufacturer': 'Manufacturer ${index + 1}',
+      'model': 'Model ${index + 1}',
+      'osVersion': 'Android 11',
+      'batteryPercentage': (index + 1) * 2, // Example battery percentage
+      'availableMemory': '${(index + 1) * 1}GB', // Example available memory
+      'availableMemoryPercentage': 75, // Example percentage for memory usage
+      'phoneNumber': '123-456-789${index}',
+      'action': 'Edit'
+    };
   });
 
   List<Map<String, dynamic>> _pagedData = [];
@@ -552,9 +635,3 @@ class DataProvider with ChangeNotifier {
     }
   }
 }
-
-
-
-
-
-
