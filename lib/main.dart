@@ -7,6 +7,10 @@ import 'controller/menu_provider.dart';
 import 'custom_sidemenu.dart';
 import 'device_popup.dart';
 import 'draggable_resizable_popup.dart';
+import 'features/flutter_crud_table/example/api_data_table_example.dart';
+import 'features/flutter_crud_table/example/crud_table_example.dart';
+import 'features/flutter_crud_table/example/data_table_example.dart';
+import 'features/flutter_crud_table/example/simple_table.dart';
 import 'model/menu_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -461,35 +465,63 @@ import 'package:provider/provider.dart';
 
 
 
+// void main() {
+//   runApp(
+//     MultiProvider(
+//       providers: [
+//         ChangeNotifierProvider(create: (_) => DeviceDetailsProvider()..fetchDeviceDetails()),
+//       ],
+//       child: MaterialApp(
+//         home: MyApp(),
+//       ),
+//     ),
+//   );
+// }
+//
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Device Management'),
+//       ),
+//       body: Center(
+//         child: ElevatedButton(
+//           onPressed: () {
+//             // Show the popup using Overlay
+//             showDraggablePopup(context);
+//           },
+//           child: Text('Open Device Details'),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
+
+
+
 void main() {
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => DeviceDetailsProvider()..fetchDeviceDetails()),
-      ],
-      child: MaterialApp(
-        home: MyApp(),
-      ),
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Device Management'),
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
       ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            // Show the popup using Overlay
-            showDraggablePopup(context);
-          },
-          child: Text('Open Device Details'),
-        ),
-      ),
+      //home: SimpleTableExample(),
+      //home: DataTableExample(),
+      //home: CRUDTableExample(),
+      home: ApiDataTableExample(),
     );
   }
 }
