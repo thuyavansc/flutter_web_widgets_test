@@ -512,13 +512,13 @@ class _CRUDTableWidgetState<T> extends State<CRUDTableWidget<T>> {
     }
   }
 
-  Future<void> _editItem(T item) async {
+  Future<void> _editItem0(T item) async {
     if (widget.editFormBuilder != null) {
       showDialog(
         context: context,
-        builder: (context) {
+        builder: (dialogContext) {
           return Dialog(
-            child: widget.editFormBuilder!(context, item, (updatedItem) async {
+            child: widget.editFormBuilder!(dialogContext, item, (updatedItem) async {
               Navigator.pop(context);
               try {
                 await widget.crudController.editItem(updatedItem);
@@ -536,6 +536,34 @@ class _CRUDTableWidgetState<T> extends State<CRUDTableWidget<T>> {
       );
     }
   }
+
+  Future<void> _editItem(T item) async {
+    if (widget.editFormBuilder != null) {
+      final parentContext = context; // Capture the parent context
+      showDialog(
+        context: parentContext,
+        builder: (dialogContext) {
+          return Dialog(
+            child: widget.editFormBuilder!(dialogContext, item, (updatedItem) async {
+              try {
+                await widget.crudController.editItem(updatedItem);
+                Navigator.pop(dialogContext); // Close the dialog
+                ScaffoldMessenger.of(parentContext).showSnackBar(
+                  const SnackBar(content: Text('Item updated successfully')),
+                );
+              } catch (e) {
+                // Optionally, do not close the dialog to let the user try again
+                ScaffoldMessenger.of(parentContext).showSnackBar(
+                  SnackBar(content: Text('Failed to update item: $e')),
+                );
+              }
+            }),
+          );
+        },
+      );
+    }
+  }
+
 
   Future<void> _deleteItem(T item) async {
     bool confirm = await showDialog(

@@ -375,7 +375,7 @@ class DataTableController<T> extends ChangeNotifier {
   DataTableController({
     required this.dataFetcher,
     int initialItemsPerPage = 10,
-    this.debounceDuration = const Duration(milliseconds: 500),
+    this.debounceDuration = const Duration(milliseconds: 1000),
   }) : _itemsPerPage = initialItemsPerPage;
 
   List<T> get items => _items;

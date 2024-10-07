@@ -519,8 +519,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       //home: SimpleTableExample(),
-      //home: DataTableExample(),
-      home: CRUDTableExample(),
+      home: DataTableExample(),
+      //home: CRUDTableExample(),
       //home: ApiDataTableExample(),
     );
   }
