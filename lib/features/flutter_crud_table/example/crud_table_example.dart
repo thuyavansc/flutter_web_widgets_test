@@ -7,6 +7,9 @@ import '../crud_table/crud_table_widget.dart';
 import '../data_table/data_table_controller.dart';
 import '../data_table/data_table_widget.dart';
 
+import 'item_model.dart';
+import 'api_service.dart';
+
 // class Item {
 //   String name;
 //   int quantity;
@@ -179,43 +182,29 @@ import '../data_table/data_table_widget.dart';
 
 
 
-class Item {
-  String name;
-  int quantity;
-  double price;
 
-  Item({
-    required this.name,
-    required this.quantity,
-    required this.price,
-  });
 
-  @override
-  String toString() {
-    return '$name';
-  }
-}
 
 class CRUDTableExample extends StatefulWidget {
-  const CRUDTableExample({Key? key}) : super(key: key);
-
   @override
   _CRUDTableExampleState createState() => _CRUDTableExampleState();
 }
 
 class _CRUDTableExampleState extends State<CRUDTableExample> {
   late DataTableController<Item> dataTableController;
+  late CRUDTableController<Item> crudTableController;
 
   @override
   void initState() {
     super.initState();
-    final initialItems = [
-      Item(name: 'Apple', quantity: 10, price: 1.5),
-      Item(name: 'Banana', quantity: 20, price: 0.75),
-      Item(name: 'Orange', quantity: 15, price: 1.0),
-    ];
     dataTableController = DataTableController<Item>(
-      initialItems: initialItems,
+      dataFetcher: fetchItems,
+    );
+    crudTableController = CRUDTableController<Item>(
+      dataTableController: dataTableController,
+      createItem: apiCreateItem,
+      updateItem: apiUpdateItem,
+      deleteItem: apiDeleteItem,
     );
   }
 
@@ -223,16 +212,16 @@ class _CRUDTableExampleState extends State<CRUDTableExample> {
   Widget build(BuildContext context) {
     final headers = [
       TableHeader<Item>(
+        name: 'ID',
+        valueGetter: (item) => item.id.toString(),
+      ),
+      TableHeader<Item>(
         name: 'Name',
         valueGetter: (item) => item.name,
       ),
       TableHeader<Item>(
-        name: 'Quantity',
-        valueGetter: (item) => item.quantity.toString(),
-      ),
-      TableHeader<Item>(
-        name: 'Price',
-        valueGetter: (item) => '\$${item.price.toStringAsFixed(2)}',
+        name: 'Email',
+        valueGetter: (item) => item.email,
       ),
     ];
 
@@ -242,10 +231,10 @@ class _CRUDTableExampleState extends State<CRUDTableExample> {
         title: 'Items',
         headers: headers,
         dataTableController: dataTableController,
-        addFormBuilder: (context, onAdd) {
+        crudController: crudTableController,
+        formBuilder: (context, onSubmit) {
           final nameController = TextEditingController();
-          final quantityController = TextEditingController();
-          final priceController = TextEditingController();
+          final emailController = TextEditingController();
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: SingleChildScrollView(
@@ -258,24 +247,18 @@ class _CRUDTableExampleState extends State<CRUDTableExample> {
                     decoration: const InputDecoration(labelText: 'Name'),
                   ),
                   TextField(
-                    controller: quantityController,
-                    decoration: const InputDecoration(labelText: 'Quantity'),
-                    keyboardType: TextInputType.number,
-                  ),
-                  TextField(
-                    controller: priceController,
-                    decoration: const InputDecoration(labelText: 'Price'),
-                    keyboardType: TextInputType.number,
+                    controller: emailController,
+                    decoration: const InputDecoration(labelText: 'Email'),
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
                       final newItem = Item(
+                        id: 0, // ID will be assigned by the server
                         name: nameController.text,
-                        quantity: int.parse(quantityController.text),
-                        price: double.parse(priceController.text),
+                        email: emailController.text,
                       );
-                      onAdd(newItem);
+                      onSubmit(newItem);
                     },
                     child: const Text('Add'),
                   ),
@@ -284,10 +267,9 @@ class _CRUDTableExampleState extends State<CRUDTableExample> {
             ),
           );
         },
-        editFormBuilder: (context, item, onEdit) {
+        editFormBuilder: (context, item, onSubmit) {
           final nameController = TextEditingController(text: item.name);
-          final quantityController = TextEditingController(text: item.quantity.toString());
-          final priceController = TextEditingController(text: item.price.toString());
+          final emailController = TextEditingController(text: item.email);
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: SingleChildScrollView(
@@ -300,24 +282,18 @@ class _CRUDTableExampleState extends State<CRUDTableExample> {
                     decoration: const InputDecoration(labelText: 'Name'),
                   ),
                   TextField(
-                    controller: quantityController,
-                    decoration: const InputDecoration(labelText: 'Quantity'),
-                    keyboardType: TextInputType.number,
-                  ),
-                  TextField(
-                    controller: priceController,
-                    decoration: const InputDecoration(labelText: 'Price'),
-                    keyboardType: TextInputType.number,
+                    controller: emailController,
+                    decoration: const InputDecoration(labelText: 'Email'),
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      final editedItem = Item(
+                      final updatedItem = Item(
+                        id: item.id,
                         name: nameController.text,
-                        quantity: int.parse(quantityController.text),
-                        price: double.parse(priceController.text),
+                        email: emailController.text,
                       );
-                      onEdit(editedItem);
+                      onSubmit(updatedItem);
                     },
                     child: const Text('Save'),
                   ),
@@ -330,3 +306,5 @@ class _CRUDTableExampleState extends State<CRUDTableExample> {
     );
   }
 }
+
+

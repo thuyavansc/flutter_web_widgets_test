@@ -520,8 +520,8 @@ class MyApp extends StatelessWidget {
       ),
       //home: SimpleTableExample(),
       //home: DataTableExample(),
-      //home: CRUDTableExample(),
-      home: ApiDataTableExample(),
+      home: CRUDTableExample(),
+      //home: ApiDataTableExample(),
     );
   }
 }
