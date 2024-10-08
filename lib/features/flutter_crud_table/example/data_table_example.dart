@@ -52,13 +52,61 @@ import 'item_model.dart';
 
 
 
+//Working example
+// class DataTableExample extends StatelessWidget {
+//   DataTableExample({Key? key}) : super(key: key);
+//
+//   final DataTableController<Item> controller = DataTableController<Item>(
+//     dataFetcher: fetchItems,
+//   );
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final headers = [
+//       TableHeader<Item>(
+//         name: 'ID',
+//         valueGetter: (item) => item.id.toString(),
+//       ),
+//       TableHeader<Item>(
+//         name: 'Name',
+//         valueGetter: (item) => item.name,
+//       ),
+//       TableHeader<Item>(
+//         name: 'Email',
+//         valueGetter: (item) => item.email,
+//       ),
+//     ];
+//
+//     return Scaffold(
+//       appBar: AppBar(title: const Text('Data Table Example')),
+//       body: DataTableWidget<Item>(
+//         headers: headers,
+//         controller: controller,
+//       ),
+//     );
+//   }
+// }
 
-class DataTableExample extends StatelessWidget {
-  DataTableExample({Key? key}) : super(key: key);
 
-  final DataTableController<Item> controller = DataTableController<Item>(
-    dataFetcher: fetchItems,
-  );
+
+
+class DataTableExample extends StatefulWidget {
+  @override
+  _DataTableExampleState createState() => _DataTableExampleState();
+}
+
+class _DataTableExampleState extends State<DataTableExample> {
+  late DataTableController<Item> controller;
+  List<Item> selectedItems = [];
+
+  @override
+  void initState() {
+    super.initState();
+    controller = DataTableController<Item>(
+      dataFetcher: fetchItems,
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +130,25 @@ class DataTableExample extends StatelessWidget {
       body: DataTableWidget<Item>(
         headers: headers,
         controller: controller,
+        selectable: true,
+        selectedItems: selectedItems,
+        onSelectionChanged: (selected) {
+          setState(() {
+            selectedItems = selected;
+          });
+        },
+        expandable: true,
+        expandedBuilder: (item) {
+          return Container(
+            padding: const EdgeInsets.all(8.0),
+            color: Colors.grey[100],
+            child: Text('Details: ${item.details}'),
+          );
+        },
+        onRowTap: (item) {
+          // Handle row tap if needed
+          print('Row tapped: ${item.name}');
+        },
       ),
     );
   }
