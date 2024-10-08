@@ -1,3 +1,4 @@
+import 'package:data_table_2/data_table_2.dart';
 
 // lib/data_table/data_table_widget.dart
 import 'package:flutter/material.dart';
@@ -1674,6 +1675,233 @@ import 'package:flutter/material.dart';
 
 
 
+// class DataTableWidget<T> extends StatefulWidget {
+//   final List<TableHeader<T>> headers;
+//   final DataTableController<T> controller;
+//   final bool showSearch;
+//   final bool showPagination;
+//
+//   // New optional parameters
+//   final bool selectable;
+//   final List<T>? selectedItems;
+//   final Function(List<T> selectedItems)? onSelectionChanged;
+//   final Function(T item)? onRowTap;
+//   final SearchMatcher<T>? searchMatcher;
+//   final bool showSelectionTitle;
+//   final String selectionTitle; // Default to 'Select'
+//
+//   const DataTableWidget({
+//     Key? key,
+//     required this.headers,
+//     required this.controller,
+//     this.showSearch = true,
+//     this.showPagination = true,
+//     this.selectable = false,
+//     this.selectedItems,
+//     this.onSelectionChanged,
+//     this.onRowTap,
+//     this.searchMatcher,
+//     this.showSelectionTitle = false,
+//     this.selectionTitle = 'Select',
+//   }) : super(key: key);
+//
+//   @override
+//   _DataTableWidgetState<T> createState() => _DataTableWidgetState<T>();
+// }
+//
+// class _DataTableWidgetState<T> extends State<DataTableWidget<T>> {
+//   Set<T> selectedItems = {};
+//   late ScrollController _horizontalScrollController;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     if (widget.selectedItems != null) {
+//       selectedItems = widget.selectedItems!.toSet();
+//     }
+//     widget.controller.addListener(_onControllerChanged);
+//     widget.controller.refresh(); // Initial data fetch
+//     _horizontalScrollController = ScrollController();
+//   }
+//
+//   void _onControllerChanged() {
+//     setState(() {});
+//   }
+//
+//   @override
+//   void dispose() {
+//     _horizontalScrollController.dispose();
+//     widget.controller.removeListener(_onControllerChanged);
+//     super.dispose();
+//   }
+//
+//   void _toggleSelected(T item) {
+//     setState(() {
+//       if (selectedItems.contains(item)) {
+//         selectedItems.remove(item);
+//       } else {
+//         selectedItems.add(item);
+//       }
+//       if (widget.onSelectionChanged != null) {
+//         widget.onSelectionChanged!(selectedItems.toList());
+//       }
+//     });
+//   }
+//
+//   void _toggleSelectAll(bool? value) {
+//     setState(() {
+//       if (value != null && value) {
+//         selectedItems = widget.controller.items.toSet();
+//       } else {
+//         selectedItems.clear();
+//       }
+//       if (widget.onSelectionChanged != null) {
+//         widget.onSelectionChanged!(selectedItems.toList());
+//       }
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final controller = widget.controller;
+//
+//     return LayoutBuilder(
+//       builder: (context, constraints) {
+//         return Column(
+//           children: [
+//             if (widget.showSearch)
+//             // Search bar
+//               Padding(
+//                 padding: const EdgeInsets.all(8.0),
+//                 child: TextField(
+//                   decoration: const InputDecoration(
+//                     labelText: 'Search...',
+//                     prefixIcon: Icon(Icons.search),
+//                   ),
+//                   onChanged: (value) {
+//                     controller.setSearchQuery(value);
+//                   },
+//                 ),
+//               ),
+//             // Data Table
+//             Expanded(
+//               child: controller.isLoading
+//                   ? const Center(child: CircularProgressIndicator())
+//                   : controller.items.isEmpty
+//                   ? const Center(child: Text('No items found.'))
+//                   : SingleChildScrollView(
+//                 controller: _horizontalScrollController,
+//                 scrollDirection: Axis.horizontal,
+//                 child: Container(
+//                   width: constraints.maxWidth, // Make sure DataTable takes full width
+//                   child: DataTable(
+//                     columns: _buildColumns(),
+//                     rows: _buildRows(),
+//                     showCheckboxColumn: false, // Disable DataTable's default checkboxes
+//                   ),
+//                 ),
+//               ),
+//             ),
+//             if (widget.showPagination)
+//             // Pagination controls
+//               PaginationWidget<T>(controller: controller),
+//           ],
+//         );
+//       },
+//     );
+//   }
+//
+//   List<DataColumn> _buildColumns() {
+//     List<DataColumn> columns = [];
+//
+//     // Add a single column for row selection if selectable is enabled
+//     if (widget.selectable) {
+//       columns.add(
+//         DataColumn(
+//           label: Row(
+//             children: [
+//               Checkbox(
+//                 value: selectedItems.length == widget.controller.items.length &&
+//                     widget.controller.items.isNotEmpty,
+//                 onChanged: _toggleSelectAll,
+//               ),
+//               if (widget.showSelectionTitle) ...[
+//                 const SizedBox(width: 4),
+//                 Text(widget.selectionTitle),
+//               ],
+//             ],
+//           ),
+//         ),
+//       );
+//     }
+//
+//     // Add the other headers normally
+//     columns.addAll(widget.headers.map((header) {
+//       return DataColumn(
+//         label: Text(
+//           header.name,
+//           style: const TextStyle(fontWeight: FontWeight.bold),
+//         ),
+//       );
+//     }).toList());
+//
+//     return columns;
+//   }
+//
+//   List<DataRow> _buildRows() {
+//     return widget.controller.items.map((item) {
+//       final isSelected = selectedItems.contains(item);
+//       List<DataCell> cells = [];
+//
+//       // Add row-level selection checkbox if selectable is enabled
+//       if (widget.selectable) {
+//         cells.add(
+//           DataCell(
+//             Checkbox(
+//               value: isSelected,
+//               onChanged: (value) {
+//                 _toggleSelected(item);
+//               },
+//             ),
+//           ),
+//         );
+//       }
+//
+//       // Add the other row cells
+//       cells.addAll(widget.headers.map((header) {
+//         Widget content;
+//         if (header.widgetBuilder != null) {
+//           content = header.widgetBuilder!(item);
+//         } else if (header.valueGetter != null) {
+//           final value = header.valueGetter!(item);
+//           content = Text(value);
+//         } else {
+//           content = const SizedBox();
+//         }
+//         return DataCell(content);
+//       }).toList());
+//
+//       return DataRow(
+//         selected: isSelected,
+//         cells: cells,
+//         onSelectChanged: widget.onRowTap != null
+//             ? (selected) {
+//           if (selected != null && selected) {
+//             widget.onRowTap!(item);
+//           }
+//         }
+//             : null,
+//       );
+//     }).toList();
+//   }
+// }
+
+
+
+
+
+
+//Working Datatable code
 class DataTableWidget<T> extends StatefulWidget {
   final List<TableHeader<T>> headers;
   final DataTableController<T> controller;
@@ -1797,6 +2025,32 @@ class _DataTableWidgetState<T> extends State<DataTableWidget<T>> {
                     child: SingleChildScrollView(
                       scrollDirection: Axis.vertical,
                       child: DataTable(
+                        border: TableBorder(
+                          verticalInside: BorderSide(
+                            color: Colors.grey, // Color of the vertical line
+                            width: 1, // Thickness of the vertical line
+                          ),
+                          horizontalInside: BorderSide(
+                            color: Colors.grey, // Horizontal lines (optional, for rows)
+                            width: 1,
+                          ),
+                          top: BorderSide(
+                            color: Colors.grey,
+                            width: 1,
+                          ),
+                          bottom: BorderSide(
+                            color: Colors.grey,
+                            width: 1,
+                          ),
+                          left: BorderSide(
+                            color: Colors.grey,
+                            width: 1,
+                          ),
+                          right: BorderSide(
+                            color: Colors.grey,
+                            width: 1,
+                          ),
+                        ),
                         columns: _buildColumns(),
                         rows: _buildRows(),
                         showCheckboxColumn: false, // Disable DataTable's default checkboxes
@@ -1900,4 +2154,427 @@ class _DataTableWidgetState<T> extends State<DataTableWidget<T>> {
     }).toList();
   }
 }
+
+
+
+
+
+// colum width resize working - Datatable2
+// class DataTableWidget<T> extends StatefulWidget {
+//   final List<TableHeader<T>> headers;
+//   final DataTableController<T> controller;
+//   final bool showSearch;
+//   final bool showPagination;
+//   final bool selectable;
+//   final List<T>? selectedItems;
+//   final Function(List<T> selectedItems)? onSelectionChanged;
+//   final Function(T item)? onRowTap;
+//   final bool showSelectionTitle;
+//   final String selectionTitle;
+//
+//   const DataTableWidget({
+//     Key? key,
+//     required this.headers,
+//     required this.controller,
+//     this.showSearch = true,
+//     this.showPagination = true,
+//     this.selectable = false,
+//     this.selectedItems,
+//     this.onSelectionChanged,
+//     this.onRowTap,
+//     this.showSelectionTitle = false,
+//     this.selectionTitle = 'Select',
+//   }) : super(key: key);
+//
+//   @override
+//   _DataTableWidgetState<T> createState() => _DataTableWidgetState<T>();
+// }
+//
+// class _DataTableWidgetState<T> extends State<DataTableWidget<T>> {
+//   Set<T> selectedItems = {};
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     if (widget.selectedItems != null) {
+//       selectedItems = widget.selectedItems!.toSet();
+//     }
+//     widget.controller.addListener(_onControllerChanged);
+//   }
+//
+//   void _onControllerChanged() {
+//     setState(() {});
+//   }
+//
+//   @override
+//   void dispose() {
+//     widget.controller.removeListener(_onControllerChanged);
+//     super.dispose();
+//   }
+//
+//   List<DataColumn2> _buildColumns() {
+//     List<DataColumn2> columns = [];
+//
+//     if (widget.selectable) {
+//       columns.add(
+//         DataColumn2(
+//           label: Row(
+//             children: [
+//               Checkbox(
+//                 value: selectedItems.length == widget.controller.items.length &&
+//                     widget.controller.items.isNotEmpty,
+//                 onChanged: _toggleSelectAll,
+//               ),
+//               if (widget.showSelectionTitle) ...[
+//                 const SizedBox(width: 4),
+//                 Text(widget.selectionTitle),
+//               ],
+//             ],
+//           ),
+//           fixedWidth: 150, // Fixed width for selection column
+//         ),
+//       );
+//     }
+//
+//     columns.addAll(widget.headers.map((header) {
+//       return DataColumn2(
+//         label: Text(
+//           header.name,
+//           style: const TextStyle(fontWeight: FontWeight.bold),
+//         ),
+//         size: ColumnSize.S, // Adjust other columns if necessary
+//       );
+//     }).toList());
+//
+//     return columns;
+//   }
+//
+//   void _toggleSelectAll(bool? value) {
+//     setState(() {
+//       if (value != null && value) {
+//         selectedItems = widget.controller.items.toSet();
+//       } else {
+//         selectedItems.clear();
+//       }
+//       if (widget.onSelectionChanged != null) {
+//         widget.onSelectionChanged!(selectedItems.toList());
+//       }
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       children: [
+//         if (widget.showSearch)
+//           Padding(
+//             padding: const EdgeInsets.all(8.0),
+//             child: TextField(
+//               decoration: const InputDecoration(
+//                 labelText: 'Search...',
+//                 prefixIcon: Icon(Icons.search),
+//               ),
+//               onChanged: (value) {
+//                 widget.controller.setSearchQuery(value);
+//               },
+//             ),
+//           ),
+//         Expanded(
+//           child: ClipRect( // Optional, if you want to clip overflowed content
+//             child: DataTable2(
+//               columns: _buildColumns(),
+//               rows: _buildRows(),
+//               columnSpacing: 20, // Reduce if necessary
+//               minWidth: 400, // Set based on your screen width
+//               showCheckboxColumn: false,
+//             ),
+//           ),
+//         )
+//
+//       ],
+//     );
+//   }
+//
+//   List<DataRow> _buildRows() {
+//     return widget.controller.items.map((item) {
+//       final isSelected = selectedItems.contains(item);
+//       List<DataCell> cells = [];
+//
+//       if (widget.selectable) {
+//         cells.add(
+//           DataCell(
+//             Checkbox(
+//               value: isSelected,
+//               onChanged: (value) {
+//                 _toggleSelected(item);
+//               },
+//             ),
+//           ),
+//         );
+//       }
+//
+//       cells.addAll(widget.headers.map((header) {
+//         final value = header.valueGetter?.call(item) ?? '';
+//         return DataCell(Text(value));
+//       }).toList());
+//
+//       return DataRow(
+//         selected: isSelected,
+//         cells: cells,
+//         onSelectChanged: widget.onRowTap != null
+//             ? (selected) {
+//           if (selected != null && selected) {
+//             widget.onRowTap!(item);
+//           }
+//         }
+//             : null,
+//       );
+//     }).toList();
+//   }
+//
+//   void _toggleSelected(T item) {
+//     setState(() {
+//       if (selectedItems.contains(item)) {
+//         selectedItems.remove(item);
+//       } else {
+//         selectedItems.add(item);
+//       }
+//       if (widget.onSelectionChanged != null) {
+//         widget.onSelectionChanged!(selectedItems.toList());
+//       }
+//     });
+//   }
+// }
+
+
+
+//Fixed Column Size working with DataTable2 not default Flutter Datatable
+// class DataTableWidget<T> extends StatefulWidget {
+//   final List<TableHeader<T>> headers;
+//   final DataTableController<T> controller;
+//   final bool showSearch;
+//   final bool showPagination;
+//
+//   // New optional parameters
+//   final bool selectable;
+//   final List<T>? selectedItems;
+//   final Function(List<T> selectedItems)? onSelectionChanged;
+//   final Function(T item)? onRowTap;
+//   final SearchMatcher<T>? searchMatcher;
+//   final bool showSelectionTitle;
+//   final String selectionTitle; // Default to 'Select'
+//
+//   const DataTableWidget({
+//     Key? key,
+//     required this.headers,
+//     required this.controller,
+//     this.showSearch = true,
+//     this.showPagination = true,
+//     this.selectable = false,
+//     this.selectedItems,
+//     this.onSelectionChanged,
+//     this.onRowTap,
+//     this.searchMatcher,
+//     this.showSelectionTitle = false,
+//     this.selectionTitle = 'Select',
+//   }) : super(key: key);
+//
+//   @override
+//   _DataTableWidgetState<T> createState() => _DataTableWidgetState<T>();
+// }
+//
+// class _DataTableWidgetState<T> extends State<DataTableWidget<T>> {
+//   Set<T> selectedItems = {};
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     if (widget.selectedItems != null) {
+//       selectedItems = widget.selectedItems!.toSet();
+//     }
+//     widget.controller.addListener(_onControllerChanged);
+//     widget.controller.refresh(); // Initial data fetch
+//   }
+//
+//   void _onControllerChanged() {
+//     setState(() {});
+//   }
+//
+//   @override
+//   void dispose() {
+//     widget.controller.removeListener(_onControllerChanged);
+//     super.dispose();
+//   }
+//
+//   void _toggleSelected(T item) {
+//     setState(() {
+//       if (selectedItems.contains(item)) {
+//         selectedItems.remove(item);
+//       } else {
+//         selectedItems.add(item);
+//       }
+//       if (widget.onSelectionChanged != null) {
+//         widget.onSelectionChanged!(selectedItems.toList());
+//       }
+//     });
+//   }
+//
+//   void _toggleSelectAll(bool? value) {
+//     setState(() {
+//       if (value != null && value) {
+//         selectedItems = widget.controller.items.toSet();
+//       } else {
+//         selectedItems.clear();
+//       }
+//       if (widget.onSelectionChanged != null) {
+//         widget.onSelectionChanged!(selectedItems.toList());
+//       }
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final controller = widget.controller;
+//
+//     return Column(
+//       children: [
+//         if (widget.showSearch)
+//           Padding(
+//             padding: const EdgeInsets.all(8.0),
+//             child: TextField(
+//               decoration: const InputDecoration(
+//                 labelText: 'Search...',
+//                 prefixIcon: Icon(Icons.search),
+//               ),
+//               onChanged: (value) {
+//                 controller.setSearchQuery(value);
+//               },
+//             ),
+//           ),
+//         Expanded(
+//           child: controller.isLoading
+//               ? const Center(child: CircularProgressIndicator())
+//               : controller.items.isEmpty
+//               ? const Center(child: Text('No items found.'))
+//               : Padding(
+//                 padding: const EdgeInsets.all(8.0),
+//                 child: DataTable2(
+//                             border: TableBorder(
+//                 verticalInside: BorderSide(
+//                   color: Colors.grey, // Color of the vertical line
+//                   width: 1, // Thickness of the vertical line
+//                 ),
+//                 horizontalInside: BorderSide(
+//                   color: Colors.grey, // Horizontal lines (optional, for rows)
+//                   width: 1,
+//                 ),
+//                 top: BorderSide(
+//                   color: Colors.grey,
+//                   width: 1,
+//                 ),
+//                 bottom: BorderSide(
+//                   color: Colors.grey,
+//                   width: 1,
+//                 ),
+//                 left: BorderSide(
+//                   color: Colors.grey,
+//                   width: 1,
+//                 ),
+//                 right: BorderSide(
+//                   color: Colors.grey,
+//                   width: 1,
+//                 ),
+//                             ),
+//                             columns: _buildColumns(),
+//                             rows: _buildRows(),
+//                             showCheckboxColumn: false, // Disable default checkbox column
+//                             columnSpacing: MediaQuery.of(context).size.width * 0.05,
+//                             minWidth: 500, // Set a minimum width for the entire table
+//                           ),
+//               ),
+//         ),
+//         if (widget.showPagination)
+//           PaginationWidget<T>(controller: controller),
+//       ],
+//     );
+//   }
+//
+//   List<DataColumn2> _buildColumns() {
+//     List<DataColumn2> columns = [];
+//
+//     // Add a single column for row selection if selectable is enabled
+//     if (widget.selectable) {
+//       columns.add(
+//         DataColumn2(
+//           label: Row(
+//             children: [
+//               Checkbox(
+//                 value: selectedItems.length == widget.controller.items.length &&
+//                     widget.controller.items.isNotEmpty,
+//                 onChanged: _toggleSelectAll,
+//               ),
+//               if (widget.showSelectionTitle) ...[
+//                 const SizedBox(width: 4),
+//                 Text(widget.selectionTitle),
+//               ],
+//             ],
+//           ),
+//           fixedWidth: widget.showSelectionTitle ? 110 : 40, // Fixed width for selection column
+//         ),
+//       );
+//     }
+//
+//     // Add other headers normally
+//     columns.addAll(widget.headers.map((header) {
+//       return DataColumn2(
+//         label: Text(
+//           header.name,
+//           style: const TextStyle(fontWeight: FontWeight.bold),
+//         ),
+//         size: ColumnSize.S, // Adjust as needed
+//       );
+//     }).toList());
+//
+//     return columns;
+//   }
+//
+//   List<DataRow> _buildRows() {
+//     return widget.controller.items.map((item) {
+//       final isSelected = selectedItems.contains(item);
+//       List<DataCell> cells = [];
+//
+//       // Add row-level selection checkbox if selectable is enabled
+//       if (widget.selectable) {
+//         cells.add(
+//           DataCell(
+//             Checkbox(
+//               value: isSelected,
+//               onChanged: (value) {
+//                 _toggleSelected(item);
+//               },
+//             ),
+//           ),
+//         );
+//       }
+//
+//       // Add other row cells normally
+//       cells.addAll(widget.headers.map((header) {
+//         final value = header.valueGetter?.call(item) ?? '';
+//         return DataCell(Text(value));
+//       }).toList());
+//
+//       return DataRow(
+//         selected: isSelected,
+//         cells: cells,
+//         onSelectChanged: widget.onRowTap != null
+//             ? (selected) {
+//           if (selected != null && selected) {
+//             widget.onRowTap!(item);
+//           }
+//         }
+//             : null,
+//       );
+//     }).toList();
+//   }
+// }
 
