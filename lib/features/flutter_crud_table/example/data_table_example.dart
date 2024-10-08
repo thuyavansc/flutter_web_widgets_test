@@ -137,18 +137,20 @@ class _DataTableExampleState extends State<DataTableExample> {
             selectedItems = selected;
           });
         },
-        expandable: true,
-        expandedBuilder: (item) {
-          return Container(
-            padding: const EdgeInsets.all(8.0),
-            color: Colors.grey[100],
-            child: Text('Details: ${item.details}'),
-          );
-        },
+        // expandable: true,
+        // expandedBuilder: (item) {
+        //   return Container(
+        //     padding: const EdgeInsets.all(8.0),
+        //     color: Colors.grey[100],
+        //     child: Text('Details: ${item.details}'),
+        //   );
+        // },
         onRowTap: (item) {
           // Handle row tap if needed
           print('Row tapped: ${item.name}');
         },
+        showSelectionTitle: true,
+        selectionTitle: 'Select',
       ),
     );
   }

@@ -11,6 +11,7 @@ import 'features/flutter_crud_table/example/api_data_table_example.dart';
 import 'features/flutter_crud_table/example/crud_table_example.dart';
 import 'features/flutter_crud_table/example/data_table_example.dart';
 import 'features/flutter_crud_table/example/simple_table.dart';
+import 'features/others/custom_datatable.dart';
 import 'features/others/storagetype_datatable.dart';
 import 'model/menu_item.dart';
 import 'package:flutter/material.dart';
@@ -503,41 +504,42 @@ import 'package:provider/provider.dart';
 
 
 
-// void main() {
-//   runApp(const MyApp());
-// }
-//
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//
-//   // This widget is the root of your application.
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Flutter Demo',
-//       theme: ThemeData(
-//         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-//         useMaterial3: true,
-//       ),
-//       //home: SimpleTableExample(),
-//       home: DataTableExample(),
-//       //home: CRUDTableExample(),
-//       //home: ApiDataTableExample(),
-//     );
-//   }
-// }
-
-
-
-
 void main() {
-  runApp(MaterialApp(
-    theme: ThemeData(
-      primarySwatch: Colors.blue,
-      textTheme: TextTheme(
-        bodyMedium: TextStyle(color: Colors.grey[800]),
-      ),
-    ),
-    home: StorageTypeDataTable(),
-  ));
+  runApp(const MyApp());
 }
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      //home: SimpleTableExample(),
+      home: DataTableExample(),
+      //home: CRUDTableExample(),
+      //home: ApiDataTableExample(),
+      //home: CustomDataTableExample(),
+    );
+  }
+}
+
+
+
+
+// void main() {
+//   runApp(MaterialApp(
+//     theme: ThemeData(
+//       primarySwatch: Colors.blue,
+//       textTheme: TextTheme(
+//         bodyMedium: TextStyle(color: Colors.grey[800]),
+//       ),
+//     ),
+//     home: StorageTypeDataTable(),
+//   ));
+// }
