@@ -131,7 +131,7 @@ class _DataTableExampleState extends State<DataTableExample> {
         headers: headers,
         controller: controller,
         selectable: true,
-        selectedItems: selectedItems,
+        //selectedItems: selectedItems,
         onSelectionChanged: (selected) {
           setState(() {
             selectedItems = selected;
@@ -150,7 +150,6 @@ class _DataTableExampleState extends State<DataTableExample> {
           print('Row tapped: ${item.name}');
         },
         showSelectionTitle: true,
-        selectionTitle: 'Select',
       ),
     );
   }

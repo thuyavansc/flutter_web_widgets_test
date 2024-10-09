@@ -7,11 +7,14 @@ import 'controller/menu_provider.dart';
 import 'custom_sidemenu.dart';
 import 'device_popup.dart';
 import 'draggable_resizable_popup.dart';
+import 'features/flutter_crud_table/data_table/data_table_controller.dart';
 import 'features/flutter_crud_table/example/api_data_table_example.dart';
 import 'features/flutter_crud_table/example/crud_table_example.dart';
 import 'features/flutter_crud_table/example/data_table_example.dart';
+import 'features/flutter_crud_table/example/example_data_table_t1.dart';
 import 'features/flutter_crud_table/example/simple_table.dart';
 import 'features/others/custom_datatable.dart';
+import 'features/others/responsive_data_table.dart';
 import 'features/others/storagetype_datatable.dart';
 import 'model/menu_item.dart';
 import 'package:flutter/material.dart';
@@ -505,6 +508,7 @@ import 'package:provider/provider.dart';
 
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -525,6 +529,8 @@ class MyApp extends StatelessWidget {
       //home: CRUDTableExample(),
       //home: ApiDataTableExample(),
       //home: CustomDataTableExample(),
+      //home: DataTableT1Example(),
+      //home:  DataPageV1(),
     );
   }
 }
