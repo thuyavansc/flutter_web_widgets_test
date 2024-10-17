@@ -93,6 +93,7 @@
 // lib/providers/file_tree_provider.dart
 
 // lib/providers/file_tree_provider.dart
+// lib/providers/file_tree_provider.dart
 
 import 'package:flutter/material.dart';
 import '../models/device_file.dart';
@@ -110,7 +111,7 @@ class FileTreeProvider extends ChangeNotifier {
   String _searchQuery = '';
   String get searchQuery => _searchQuery;
 
-  final int deviceId = 37; // Assuming deviceId is fixed as per your example
+  final int deviceId = 37; // Use the correct deviceId
 
   FileTreeProvider({ApiService? apiService})
       : _apiService = apiService ?? ApiService();
@@ -129,7 +130,7 @@ class FileTreeProvider extends ChangeNotifier {
   Future<void> fetchSubDeviceFiles(DeviceFile file) async {
     try {
       List<DeviceFile> subFiles = await _apiService.getSubDeviceFiles(deviceId, file.id);
-      file.subFiles = subFiles;
+      file.deviceFiles = subFiles;
       notifyListeners();
     } catch (e) {
       throw Exception('Error fetching sub device files: $e');
@@ -156,5 +157,6 @@ class FileTreeProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
 
 

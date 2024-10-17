@@ -558,13 +558,22 @@ import '../providers/file_tree_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import '../models/device_file.dart';
 
+// lib/widgets/file_details_section.dart
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/upload_provider.dart';
+import '../providers/file_tree_provider.dart';
+import 'package:file_picker/file_picker.dart';
+import '../models/device_file.dart';
+
 class FileDetailsSection extends StatefulWidget {
   @override
   _FileDetailsSectionState createState() => _FileDetailsSectionState();
 }
 
 class _FileDetailsSectionState extends State<FileDetailsSection> {
-  List<PlatformFile> _selectedUploadFiles = [];
+  PlatformFile? _selectedUploadFile;
 
   @override
   Widget build(BuildContext context) {
@@ -585,13 +594,12 @@ class _FileDetailsSectionState extends State<FileDetailsSection> {
 
   Widget _buildFileDetails(DeviceFile file, UploadProvider uploadProvider) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'File Details',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           Divider(),
           SizedBox(height: 10),
@@ -604,10 +612,9 @@ class _FileDetailsSectionState extends State<FileDetailsSection> {
             ),
           ),
           SizedBox(height: 20),
-          // Action Dropdown
           Row(
             children: [
-              Text('Action: ', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('Action:', style: TextStyle(fontWeight: FontWeight.bold)),
               SizedBox(width: 10),
               DropdownButton<String>(
                 value: 'No Action',
@@ -617,99 +624,30 @@ class _FileDetailsSectionState extends State<FileDetailsSection> {
                 ],
                 onChanged: (value) {
                   if (value == 'Upload') {
-                    // Upload the selected file
-                    uploadProvider.uploadFiles(targetDeviceFileId: file.id);
+                    uploadProvider.selectFiles().then((_) {
+                      uploadProvider.uploadFiles(targetDeviceFileId: file.deviceFileId);
+                    });
                   }
                 },
               ),
             ],
           ),
           SizedBox(height: 20),
-          // File Selection Button
-          ElevatedButton.icon(
-            onPressed: () async {
-              FilePickerResult? result = await FilePicker.platform.pickFiles(
-                allowMultiple: true,
-              );
-
-              if (result != null) {
-                setState(() {
-                  _selectedUploadFiles = result.files;
-                });
-                uploadProvider.addSelectedFiles(result.files);
-              }
-            },
-            icon: Icon(Icons.upload_file),
-            label: Text('Select File to Upload'),
-          ),
-          SizedBox(height: 20),
-          // Read-only File Name Textbox
-          if (_selectedUploadFiles.isNotEmpty)
+          if (uploadProvider.selectedFiles.isNotEmpty)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Selected File(s):', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('Selected File:', style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 10),
-                Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  height: 100,
-                  child: ListView.builder(
-                    itemCount: _selectedUploadFiles.length,
-                    itemBuilder: (context, index) {
-                      final file = _selectedUploadFiles[index];
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(child: Text(file.name)),
-                          IconButton(
-                            icon: Icon(Icons.remove_circle, color: Colors.red),
-                            onPressed: () {
-                              setState(() {
-                                _selectedUploadFiles.removeAt(index);
-                              });
-                              uploadProvider.removeSelectedFile(file);
-                            },
-                          ),
-                        ],
-                      );
-                    },
+                TextFormField(
+                  initialValue: uploadProvider.selectedFiles.first.name,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
                   ),
                 ),
               ],
             ),
-          SizedBox(height: 20),
-          // Upload Button
-          ElevatedButton.icon(
-            onPressed: () {
-              //uploadProvider.uploadFiles(targetDeviceFileId: selectedFile.id);
-            },
-            icon: Icon(Icons.save),
-            label: Text('Upload Files'),
-          ),
-          SizedBox(height: 20),
-          // Upload Status
-          uploadProvider.isUploading
-              ? Column(
-            children: [
-              LinearProgressIndicator(),
-              SizedBox(height: 10),
-              Text(uploadProvider.uploadStatus),
-            ],
-          )
-              : uploadProvider.uploadStatus.isNotEmpty
-              ? Text(
-            uploadProvider.uploadStatus,
-            style: TextStyle(
-              color: uploadProvider.uploadStatus.contains('Successful')
-                  ? Colors.green
-                  : Colors.red,
-            ),
-          )
-              : Container(),
         ],
       ),
     );
@@ -717,140 +655,115 @@ class _FileDetailsSectionState extends State<FileDetailsSection> {
 
   Widget _buildDirectoryDetails(DeviceFile directory, UploadProvider uploadProvider) {
     // Separate files and subdirectories
-    List<DeviceFile> files = directory.subFiles.where((file) => !file.isDirectory).toList();
-    List<DeviceFile> subdirectories = directory.subFiles.where((file) => file.isDirectory).toList();
+    List<DeviceFile> files = directory.deviceFiles.where((file) => !file.isDirectory).toList();
+    List<DeviceFile> subdirectories = directory.deviceFiles.where((file) => file.isDirectory).toList();
 
     return SingleChildScrollView(
-      padding: EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Directory Details',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           Divider(),
           SizedBox(height: 10),
-          if (subdirectories.isNotEmpty)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Subdirectories:', style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: 10),
-                ...subdirectories.map((subdir) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Text(subdir.name, style: TextStyle(color: Colors.blue)),
-                )),
-              ],
-            ),
-          if (subdirectories.isNotEmpty) SizedBox(height: 20),
           if (files.isNotEmpty)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Files:', style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: 10),
-                ...files.map((file) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          initialValue: file.name,
-                          readOnly: true,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
+              children: files.map((file) {
+                return Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            initialValue: file.name,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(width: 10),
-                      DropdownButton<String>(
-                        value: 'No Action',
-                        items: [
-                          DropdownMenuItem(value: 'No Action', child: Text('No Action')),
-                          DropdownMenuItem(value: 'Upload', child: Text('Upload')),
-                        ],
-                        onChanged: (value) {
-                          if (value == 'Upload') {
-                            uploadProvider.uploadFiles(targetDeviceFileId: directory.id);
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                )),
-              ],
+                        SizedBox(width: 10),
+                        DropdownButton<String>(
+                          value: 'No Action',
+                          items: [
+                            DropdownMenuItem(value: 'No Action', child: Text('No Action')),
+                            DropdownMenuItem(value: 'Upload', child: Text('Upload')),
+                          ],
+                          onChanged: (value) {
+                            if (value == 'Upload') {
+                              uploadProvider.selectFiles().then((_) {
+                                uploadProvider.uploadFiles(targetDeviceFileId: directory.id);
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                  ],
+                );
+              }).toList(),
+            )
+          else if (subdirectories.isNotEmpty)
+            Text('This directory contains only subdirectories.'),
+          SizedBox(height: 20),
+          Text('File Name:', style: TextStyle(fontWeight: FontWeight.bold)),
+          TextFormField(
+            initialValue: _selectedUploadFile?.name ?? '',
+            readOnly: true,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
             ),
-          if (files.isNotEmpty) SizedBox(height: 20),
-          // File Selection Button
+          ),
+          SizedBox(height: 20),
           ElevatedButton.icon(
             onPressed: () async {
-              FilePickerResult? result = await FilePicker.platform.pickFiles(
-                allowMultiple: true,
-              );
-
-              if (result != null) {
-                uploadProvider.addSelectedFiles(result.files);
-              }
+              await uploadProvider.selectFiles();
+              setState(() {
+                if (uploadProvider.selectedFiles.isNotEmpty) {
+                  _selectedUploadFile = uploadProvider.selectedFiles.first;
+                }
+              });
             },
             icon: Icon(Icons.upload_file),
             label: Text('Select File to Upload'),
           ),
           SizedBox(height: 20),
-          // Selected Files List
-          uploadProvider.selectedFiles.isEmpty
-              ? Text('No files selected.')
-              : Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Selected Files:', style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 10),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: uploadProvider.selectedFiles.length,
-                itemBuilder: (context, index) {
-                  final file = uploadProvider.selectedFiles[index];
-                  return ListTile(
-                    leading: Icon(Icons.insert_drive_file),
-                    title: Text(file.name),
-                    trailing: IconButton(
-                      icon: Icon(Icons.remove_circle, color: Colors.red),
-                      onPressed: () => uploadProvider.removeSelectedFile(file),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-          SizedBox(height: 20),
-          // Upload Button
           ElevatedButton.icon(
             onPressed: () {
-              uploadProvider.uploadFiles(targetDeviceFileId: directory.id);
+              if (_selectedUploadFile != null) {
+                uploadProvider.uploadFiles(targetDeviceFileId: directory.id);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Please select a file to upload.'),
+                    backgroundColor: Colors.orange,
+                  ),
+                );
+              }
             },
             icon: Icon(Icons.save),
-            label: Text('Upload Files'),
+            label: Text('Upload File'),
           ),
           SizedBox(height: 20),
-          // Upload Status
-          uploadProvider.isUploading
-              ? Column(
-            children: [
-              LinearProgressIndicator(),
-              SizedBox(height: 10),
-              Text(uploadProvider.uploadStatus),
-            ],
-          )
-              : uploadProvider.uploadStatus.isNotEmpty
-              ? Text(
-            uploadProvider.uploadStatus,
-            style: TextStyle(
-              color: uploadProvider.uploadStatus.contains('Successful')
-                  ? Colors.green
-                  : Colors.red,
+          if (uploadProvider.isUploading)
+            Column(
+              children: [
+                LinearProgressIndicator(),
+                SizedBox(height: 10),
+                Text(uploadProvider.uploadStatus),
+              ],
+            )
+          else if (uploadProvider.uploadStatus.isNotEmpty)
+            Text(
+              uploadProvider.uploadStatus,
+              style: TextStyle(
+                color: uploadProvider.uploadStatus.contains('Successful') ? Colors.green : Colors.red,
+              ),
             ),
-          )
-              : Container(),
         ],
       ),
     );

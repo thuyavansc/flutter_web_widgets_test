@@ -143,6 +143,13 @@ import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import '../services/api_service.dart';
 
+// lib/providers/upload_provider.dart
+
+import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
+import '../services/api_service.dart';
+
 class UploadProvider extends ChangeNotifier {
   final ApiService _apiService;
 
@@ -155,7 +162,7 @@ class UploadProvider extends ChangeNotifier {
   String _uploadStatus = '';
   String get uploadStatus => _uploadStatus;
 
-  final int deviceId = 37; // Assuming deviceId is fixed as per your example
+  final int deviceId = 37; // Use the correct deviceId
 
   UploadProvider({ApiService? apiService})
       : _apiService = apiService ?? ApiService();
@@ -163,11 +170,12 @@ class UploadProvider extends ChangeNotifier {
   Future<void> selectFiles() async {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
-        allowMultiple: true,
+        allowMultiple: false,
       );
 
       if (result != null) {
-        addSelectedFiles(result.files);
+        _selectedFiles = result.files;
+        notifyListeners();
       }
     } catch (e) {
       _uploadStatus = 'File selection error: $e';
@@ -175,13 +183,8 @@ class UploadProvider extends ChangeNotifier {
     }
   }
 
-  void addSelectedFiles(List<PlatformFile> files) {
-    _selectedFiles.addAll(files);
-    notifyListeners();
-  }
-
-  void removeSelectedFile(PlatformFile file) {
-    _selectedFiles.remove(file);
+  void clearSelectedFiles() {
+    _selectedFiles.clear();
     notifyListeners();
   }
 
@@ -232,11 +235,7 @@ class UploadProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-
-  void setUploadStatus(String status) {
-    _uploadStatus = status;
-    notifyListeners();
-  }
 }
+
 
 

@@ -9,6 +9,7 @@ import 'device_popup.dart';
 import 'draggable_resizable_popup.dart';
 import 'features/file_tree_upload/providers/file_tree_provider.dart';
 import 'features/file_tree_upload/providers/upload_provider.dart';
+import 'features/file_tree_upload/screens/device_files_screen.dart';
 import 'features/file_tree_upload/services/api_service.dart';
 import 'features/flutter_crud_table/example/api_data_table_example.dart';
 import 'features/flutter_crud_table/example/crud_table_example.dart';
@@ -597,6 +598,10 @@ import 'package:provider/provider.dart';
 // }
 
 
+// lib/main.dart
+
+
+
 void main() {
   runApp(DeviceFilesApp());
 }
@@ -607,10 +612,10 @@ class DeviceFilesApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<FileTreeProvider>(
-          create: (_) => FileTreeProvider(apiService: ApiService()),
+          create: (_) => FileTreeProvider(),
         ),
         ChangeNotifierProvider<UploadProvider>(
-          create: (_) => UploadProvider(apiService: ApiService()),
+          create: (_) => UploadProvider(),
         ),
       ],
       child: MaterialApp(

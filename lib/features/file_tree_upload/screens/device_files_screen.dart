@@ -100,6 +100,15 @@ import '../providers/upload_provider.dart';
 import '../widgets/device_files_tree_view.dart';
 import '../widgets/file_details_section.dart';
 
+// lib/screens/device_files_screen.dart
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/file_tree_provider.dart';
+import '../providers/upload_provider.dart';
+import '../widgets/device_files_tree_view.dart';
+import '../widgets/file_details_section.dart';
+
 class DeviceFilesScreen extends StatefulWidget {
   @override
   _DeviceFilesScreenState createState() => _DeviceFilesScreenState();
@@ -120,29 +129,6 @@ class _DeviceFilesScreenState extends State<DeviceFilesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Device Files'),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(48.0),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Consumer<FileTreeProvider>(
-              builder: (context, provider, child) {
-                return TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search files...',
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                  onChanged: (value) => provider.setSearchQuery(value),
-                );
-              },
-            ),
-          ),
-        ),
       ),
       body: Consumer2<FileTreeProvider, UploadProvider>(
         builder: (context, fileProvider, uploadProvider, child) {
@@ -158,7 +144,7 @@ class _DeviceFilesScreenState extends State<DeviceFilesScreen> {
                 ),
               );
               // Clear upload status after showing
-              uploadProvider.setUploadStatus('');
+             // uploadProvider.uploadStatus = '';
             }
           });
 
@@ -180,26 +166,9 @@ class _DeviceFilesScreenState extends State<DeviceFilesScreen> {
           );
         },
       ),
-      // Floating Action Button to Upload Selected Files
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          final selectedFile = Provider.of<FileTreeProvider>(context, listen: false).selectedFile;
-          if (selectedFile != null && selectedFile.isDirectory) {
-            Provider.of<UploadProvider>(context, listen: false).uploadFiles(targetDeviceFileId: selectedFile.id);
-          } else {
-            // Show a message that no directory is selected
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Please select a directory to upload files.'),
-                backgroundColor: Colors.orange,
-              ),
-            );
-          }
-        },
-        child: Icon(Icons.save),
-      ),
     );
   }
 }
+
 
 
