@@ -235,6 +235,18 @@ class UploadProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+
+  void clearUploadStatus() {
+    _uploadStatus = '';
+    notifyListeners();
+  }
+
+  void setSelectedFiles(List<PlatformFile> files) {
+    _selectedFiles = files;
+    notifyListeners();
+  }
+
 }
 
 

@@ -145,6 +145,8 @@ class _DeviceFilesScreenState extends State<DeviceFilesScreen> {
               );
               // Clear upload status after showing
              // uploadProvider.uploadStatus = '';
+              // Clear upload status after showing
+              uploadProvider.clearUploadStatus();
             }
           });
 
