@@ -9,6 +9,7 @@ import 'device_popup.dart';
 import 'draggable_resizable_popup.dart';
 import 'features/file_tree_upload/providers/file_tree_provider.dart';
 import 'features/file_tree_upload/providers/upload_provider.dart';
+import 'features/file_tree_upload/services/api_service.dart';
 import 'features/flutter_crud_table/example/api_data_table_example.dart';
 import 'features/flutter_crud_table/example/crud_table_example.dart';
 import 'features/flutter_crud_table/example/data_table_example.dart';
@@ -572,6 +573,30 @@ import 'package:provider/provider.dart';
 // }
 
 
+// void main() {
+//   runApp(DeviceFilesApp());
+// }
+//
+// class DeviceFilesApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MultiProvider(
+//       providers: [
+//         ChangeNotifierProvider<FileTreeProvider>(create: (_) => FileTreeProvider()),
+//         ChangeNotifierProvider<UploadProvider>(create: (_) => UploadProvider()),
+//       ],
+//       child: MaterialApp(
+//         title: 'Device Files App',
+//         theme: ThemeData(
+//           primarySwatch: Colors.blue,
+//         ),
+//         home: DeviceFilesScreen(),
+//       ),
+//     );
+//   }
+// }
+
+
 void main() {
   runApp(DeviceFilesApp());
 }
@@ -581,8 +606,12 @@ class DeviceFilesApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<FileTreeProvider>(create: (_) => FileTreeProvider()),
-        ChangeNotifierProvider<UploadProvider>(create: (_) => UploadProvider()),
+        ChangeNotifierProvider<FileTreeProvider>(
+          create: (_) => FileTreeProvider(apiService: ApiService()),
+        ),
+        ChangeNotifierProvider<UploadProvider>(
+          create: (_) => UploadProvider(apiService: ApiService()),
+        ),
       ],
       child: MaterialApp(
         title: 'Device Files App',
