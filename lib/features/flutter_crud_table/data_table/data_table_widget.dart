@@ -3680,16 +3680,38 @@ class _DataTableWidgetState<T> extends State<DataTableWidget<T>> {
     }).toList();
   }
 
+  // List<DataRow> _buildEmptyRow() {
+  //   // Return a single row with empty cells, no checkbox
+  //   return [
+  //     DataRow(
+  //       cells: List.generate(widget.headers.length+1, (index) {
+  //         return DataCell(
+  //           const SizedBox(), // Empty cell
+  //         );
+  //       }),
+  //     ),
+  //   ];
+  // }
+
   List<DataRow> _buildEmptyRow() {
-    // Return a single row with empty cells, no checkbox
+    // Return a single row with one cell spanning all columns
     return [
       DataRow(
-        cells: List.generate(widget.headers.length+1, (index) {
-          return DataCell(
-            const SizedBox(), // Empty cell
-          );
-        }),
+        cells: List.generate(
+          widget.headers.length + (widget.selectable ? 1 : 0), // Adjust for checkbox column if enabled
+              (index) => DataCell(
+            index == 0 && widget.selectable
+                ? const SizedBox() // Empty cell for the checkbox if selectable
+                : Container(
+              padding: const EdgeInsets.all(16.0), // Add padding for better appearance
+              alignment: Alignment.center, // Center the text
+              child: const Text('No items found', style: TextStyle(color: Colors.red)),
+            ),
+          ),
+        ),
       ),
     ];
   }
+
+
 }
